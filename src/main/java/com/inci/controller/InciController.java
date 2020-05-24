@@ -2,9 +2,11 @@ package com.inci.controller;
 
 import com.inci.dto.InciDto;
 import com.inci.service.InciService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 public class InciController {
@@ -16,7 +18,20 @@ public class InciController {
     }
 
     @GetMapping("/name")
-    public InciDto getOne(@RequestParam String name) {
+    public InciDto getByName(@RequestParam String name) {
         return inciService.findByName(name);
+    }
+
+    @GetMapping("/list")
+    public List<InciDto> analyze(@RequestParam List<String> list) {
+        return list
+                .stream()
+                .map(inciService::findByName)
+                .collect(toList());
+    }
+
+    @PostMapping("/add")
+    public Long addNewIngredient(@RequestBody InciDto inciDto) {
+        return inciService.create(inciDto);
     }
 }

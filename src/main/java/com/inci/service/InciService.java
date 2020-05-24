@@ -6,6 +6,8 @@ import com.inci.mapper.InciMapper;
 import com.inci.repository.InciRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class InciService {
 
@@ -22,17 +24,20 @@ public class InciService {
     public InciDto findByName(String name) {
         return inciRepository.findByInciName(name)
                 .map(inci -> mapper.map(inci, InciDto.class))
-                .orElseGet(null);
+                .orElse(new InciDto("not found: " + name));
     }
 
-    public InciDto getOne() {
-        Inci one = inciRepository.findById(1275L).orElse(null);
-
-        if (one != null) {
-            return mapper.map(one, InciDto.class);
-        }
-
-        return null;
+    @Transactional
+    public Long create(InciDto inciDto) {
+        return inciRepository.findByInciName(inciDto.getInciName())
+                .map(Inci::getInciId)
+                .orElse(createNewInci(inciDto));
     }
 
+    private Long createNewInci(InciDto inciDto) {
+        Inci newInci = mapper.map(inciDto, Inci.class);
+        newInci.getAlternativeNames().forEach(alt -> alt.setInci(newInci));
+        newInci.getPolishNames().forEach(pl -> pl.setInci(newInci));
+        return inciRepository.saveAndFlush(newInci).getInciId();
+    }
 }

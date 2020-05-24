@@ -11,12 +11,14 @@ import java.util.List;
 public class Function {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "functionid")
     private Long functionId;
 
     @Column(name = "function_name")
     private String functionName;
 
-    @ManyToMany(mappedBy = "functions")
+    @ManyToMany(mappedBy = "functions", cascade =
+            {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Inci> incis;
 }

@@ -10,6 +10,7 @@ import javax.persistence.*;
 public class AlternativeName {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "alternameid")
     private Long alternativeNameId;
 

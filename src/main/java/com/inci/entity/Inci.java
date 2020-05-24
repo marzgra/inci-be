@@ -14,6 +14,7 @@ import java.util.List;
 public class Inci {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "inciid")
     private Long inciId;
 
@@ -23,20 +24,18 @@ public class Inci {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
+    @ManyToMany(cascade =
+            {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "inci_function",
             joinColumns = @JoinColumn(name = "inciid"),
             inverseJoinColumns = @JoinColumn(name = "functionid")
     )
     private List<Function> functions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "inci")
+    @OneToMany(mappedBy = "inci", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PolishName> polishNames = new ArrayList<>();
 
-    @OneToMany(mappedBy = "inci")
+    @OneToMany(mappedBy = "inci", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AlternativeName> alternativeNames = new ArrayList<>();
 
 }

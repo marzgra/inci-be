@@ -10,11 +10,12 @@ import javax.persistence.*;
 public class PolishName {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "plnameid")
     private Long polishNameId;
 
-    @ManyToOne
-    @JoinColumn(name = "inciid")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inciid", referencedColumnName = "inciid")
     private Inci inci;
 
     @Column(name = "pl_name")
