@@ -1,17 +1,19 @@
 package com.inci.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "function")
 public class Function {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "functionid")
     private Long functionId;
 
@@ -21,4 +23,8 @@ public class Function {
     @ManyToMany(mappedBy = "functions", cascade =
             {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Inci> incis;
+
+    public Function(String functionName) {
+        this.functionName = functionName;
+    }
 }

@@ -12,11 +12,13 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 public class InciDto {
 
+    private Long inciId;
+
     private String inciName;
 
     private String description;
 
-    private List<String> functionNames = new ArrayList<>();
+    private List<FunctionDto> functionNames = new ArrayList<>();
 
     private List<String> polishNames = new ArrayList<>();
 
@@ -34,11 +36,8 @@ public class InciDto {
         this.description = description;
     }
 
-    public void setFunctionNames(List<String> functionNames) {
-        this.functionNames = functionNames
-                .stream()
-                .map(String::toLowerCase)
-                .collect(toList());
+    public void setFunctionNames(List<FunctionDto> functionNames) {
+        this.functionNames = functionNames;
     }
 
     public void setPolishNames(List<String> polishNames) {

@@ -25,7 +25,7 @@ public class Inci {
     private String description;
 
     @ManyToMany(cascade =
-            {CascadeType.PERSIST, CascadeType.MERGE})
+            {CascadeType.MERGE})
     @JoinTable(name = "inci_function",
             joinColumns = @JoinColumn(name = "inciid"),
             inverseJoinColumns = @JoinColumn(name = "functionid")
