@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 public class SearchDto {
     private String name;
     private Long inciId;
+    private double similarity;
 }

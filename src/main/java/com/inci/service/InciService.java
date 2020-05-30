@@ -12,8 +12,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.*;
 
 @Service
 public class InciService {
@@ -22,15 +25,17 @@ public class InciService {
     private final AlternativeNameRepository alternativeNameRepository;
     private final PolishNameRepository polishNameRepository;
     private final Mapper mapper;
+    private final LevenshteinDistanceService levenshteinDistanceService;
 
     public InciService(final InciRepository inciRepository,
                        final AlternativeNameRepository alternativeNameRepository,
                        final PolishNameRepository polishNameRepository,
-                       final Mapper mapper) {
+                       final Mapper mapper, LevenshteinDistanceService levenshteinDistanceService) {
         this.inciRepository = inciRepository;
         this.alternativeNameRepository = alternativeNameRepository;
         this.polishNameRepository = polishNameRepository;
         this.mapper = mapper;
+        this.levenshteinDistanceService = levenshteinDistanceService;
     }
 
     public InciDto findByName(String name) {
@@ -70,19 +75,23 @@ public class InciService {
     }
 
     public List<SearchDto> search(String part) {
-        List<SearchDto> result = alternativeNameRepository.findAllByAlternativeNameContaining(part)
+        List<SearchDto> result = alternativeNameRepository.findAllByAlternativeNameContaining(part.toLowerCase())
                 .stream()
                 .map(inci -> mapper.map(inci, SearchDto.class)).collect(Collectors.toList());
 
-        result.addAll(polishNameRepository.findAllByPolishNameContaining(part)
+        result.addAll(polishNameRepository.findAllByPolishNameContaining(part.toLowerCase())
                 .stream()
                 .map(inci -> mapper.map(inci, SearchDto.class))
                 .collect(Collectors.toList()));
 
-        result.addAll(inciRepository.findAllByInciNameContaining(part)
+        result.addAll(inciRepository.findAllByInciNameContaining(part.toLowerCase())
                 .stream()
                 .map(inci -> mapper.map(inci, SearchDto.class))
                 .collect(Collectors.toList()));
+
+        result.forEach(dto -> dto.setSimilarity(levenshteinDistanceService.calculateSimilarity(part.toLowerCase(), dto.getName())));
+
+        result.sort(comparing(SearchDto::getSimilarity).reversed());
 
         return result;
     }
