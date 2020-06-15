@@ -4,6 +4,7 @@ import com.inci.dto.InciDto;
 import com.inci.dto.PaginationDto;
 import com.inci.dto.SearchDto;
 import com.inci.service.InciService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +16,10 @@ import static java.util.stream.Collectors.toList;
 
 @CrossOrigin
 @RestController
+@AllArgsConstructor
 public class InciController {
 
     private final InciService inciService;
-
-    public InciController(final InciService inciService) {
-        this.inciService = inciService;
-    }
 
     @GetMapping("/ingredients/name/{name}")
     public ResponseEntity<InciDto> getByName(@PathVariable String name) {
@@ -29,16 +27,23 @@ public class InciController {
     }
 
     @GetMapping("/analyze")
-    public ResponseEntity<List<InciDto>> analyze(@RequestParam List<String> list) {
-        return ResponseEntity.ok(
+    public List<InciDto> analyze(@RequestParam List<String> list) {
+        return
                 list.stream()
+                        .map(String::trim)
+                        .map(String::toLowerCase)
                         .map(inciService::findByName)
-                        .collect(toList()));
+                        .collect(toList());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<Long> addNewIngredient(@RequestBody InciDto inciDto) throws URISyntaxException {
-        return ResponseEntity.created(new URI(inciService.create(inciDto).toString())).body(inciService.create(inciDto));
+    @PostMapping("/ingredients/add")
+    public ResponseEntity<Long> addNewIngredient(@RequestBody InciDto inciDto) {
+        return ResponseEntity.ok(inciService.create(inciDto));
+    }
+
+    @PutMapping("/ingredients/edit")
+    public ResponseEntity<Long> editIngredient(@RequestBody InciDto inciDto) {
+        return ResponseEntity.ok(inciService.editInci(inciDto));
     }
 
     @GetMapping("/ingredients")
@@ -55,5 +60,11 @@ public class InciController {
     public ResponseEntity<List<SearchDto>> getById(@PathVariable String part) {
         return ResponseEntity.ok(inciService.search(part));
     }
+
+    @GetMapping("/proteins")
+    public List<InciDto> addProteins() {
+        return inciService.addProteins();
+    }
+
 
 }

@@ -28,6 +28,12 @@ public class InciDto {
         this.inciName = inciName;
     }
 
+    public InciDto(String inciName, String description, List<FunctionDto> functionNames) {
+        this.inciName = inciName;
+        this.description = description;
+        this.functionNames = functionNames;
+    }
+
     public void setInciName(String inciName) {
         this.inciName = inciName.toLowerCase();
     }

@@ -14,4 +14,6 @@ import java.util.Optional;
 public interface FunctionRepository extends JpaRepository<Function, Long> {
     Optional<Function> findByFunctionName(String functionName);
 
+    List<Function> findAllByOrderByFunctionName();
+
 }
