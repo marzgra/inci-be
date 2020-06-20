@@ -1,5 +1,6 @@
 package com.inci.controller;
 
+import com.inci.dto.AnalyzeResultDto;
 import com.inci.dto.InciDto;
 import com.inci.dto.PaginationDto;
 import com.inci.dto.SearchDto;
@@ -27,13 +28,8 @@ public class InciController {
     }
 
     @GetMapping("/analyze")
-    public List<InciDto> analyze(@RequestParam List<String> list) {
-        return
-                list.stream()
-                        .map(String::trim)
-                        .map(String::toLowerCase)
-                        .map(inciService::findByName)
-                        .collect(toList());
+    public AnalyzeResultDto analyze(@RequestParam List<String> list) {
+        return inciService.analyze(list);
     }
 
     @PostMapping("/ingredients/add")
